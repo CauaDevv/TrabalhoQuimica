@@ -20,8 +20,8 @@ const phaseNames: Record<Phase, string> = {
 function getParticlePosition(index: number, phase: Phase) {
   if (phase === 'solid') {
     return {
-      x: 174 + (index % 10) * 29,
-      y: 238 + Math.floor(index / 10) * 13,
+      x: 172 + (index % 10) * 30,
+      y: 230 + Math.floor(index / 10) * 13,
     }
   }
 
@@ -53,10 +53,12 @@ export function ParticleVessel({
   const vibration = Math.min(5, Math.max(0.5, (temperature - substance.minTemperature) / 32))
 
   const particles = Array.from(
-    { length: phase === 'solid' ? 40 : 48 },
+    { length: 48 },
     (_, index) => {
       const { x, y } = getParticlePosition(index, phase)
       const style = {
+        '--particle-x': `${(x / 640) * 100}%`,
+        '--particle-y': `${(y / 340) * 100}%`,
         '--drift-x': `${((index % 5) - 2) * (phase === 'gas' ? 9 : phase === 'liquid' ? 4 : vibration * 0.55)}px`,
         '--drift-y': `${((index % 7) - 3) * (phase === 'gas' ? 8 : phase === 'liquid' ? 3 : vibration * 0.45)}px`,
         '--delay': `${(index % 12) * -0.19}s`,
@@ -67,9 +69,9 @@ export function ParticleVessel({
       return (
         <circle
           className={`particle particle--${phase}`}
-          key={`${substance.id}-${phase}-${index}`}
-          cx={x}
-          cy={y}
+          key={index}
+          cx={0}
+          cy={0}
           r={phase === 'gas' ? 5 : 6}
           style={style}
         />
@@ -96,7 +98,6 @@ export function ParticleVessel({
       <svg
         aria-label={`Simulação de ${substance.name} no estado ${phaseNames[phase].toLowerCase()}`}
         className="vessel-illustration"
-        key={substance.id}
         role="img"
         viewBox="0 0 640 340"
       >
@@ -110,67 +111,52 @@ export function ParticleVessel({
             <stop offset="1" stopColor="#fff" stopOpacity=".36" />
           </linearGradient>
           <linearGradient id="liquid" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor={substance.color} stopOpacity=".52" />
-            <stop offset="1" stopColor={substance.color} stopOpacity=".2" />
+            <stop className="liquid-stop liquid-stop--top" offset="0" stopOpacity=".52" />
+            <stop className="liquid-stop liquid-stop--bottom" offset="1" stopOpacity=".2" />
           </linearGradient>
+          <radialGradient id="burner-aura">
+            <stop offset="0" stopColor="#f2a15f" stopOpacity=".4" />
+            <stop offset=".55" stopColor="#e98b58" stopOpacity=".18" />
+            <stop offset="1" stopColor="#e98b58" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
         <ellipse className="vessel-shadow" cx="320" cy="313" rx="194" ry="12" />
 
-        {lidClosed && (
-          <g className="vessel-lid">
-            <rect x="99" y="40" width="442" height="17" rx="7" />
-            <rect x="266" y="30" width="108" height="9" rx="4.5" />
-          </g>
-        )}
+        <g className={`vessel-lid${lidClosed ? ' vessel-lid--closed' : ' vessel-lid--open'}`}>
+          <rect x="99" y="40" width="442" height="17" rx="7" />
+          <rect x="266" y="30" width="108" height="9" rx="4.5" />
+        </g>
 
         <g clipPath="url(#vessel-clip)">
-          {phase === 'liquid' && (
-            <>
-              <path
-                className="liquid-fill"
-                d="M104 185q55-5 108 0t108 0 108 0 108 0v119H104z"
-                fill="url(#liquid)"
+          <path className="phase-fill phase-fill--gas" d="M104 58h432v244H104z" />
+          <path className="phase-fill phase-fill--solid" d="M105 226h430v78H105z" />
+          <path
+            className="liquid-fill"
+            d="M104 185q55-5 108 0t108 0 108 0 108 0v119H104z"
+            fill="url(#liquid)"
+          />
+          <path
+            className="liquid-surface"
+            d="M104 184q55-8 108 0t108 0 108 0 108 0"
+            fill="none"
+            stroke="var(--liquid-color)"
+            strokeOpacity=".8"
+            strokeWidth="2"
+          />
+          <g className={`boiling-bubbles${approachingBoiling ? ' boiling-bubbles--active' : ''}`}>
+            {[0, 1, 2, 3, 4, 5].map((index) => (
+              <circle
+                className="boiling-bubble"
+                cx={171 + index * 55}
+                cy={220 + (index % 3) * 20}
+                key={index}
+                r={3 + (index % 3)}
+                style={{ '--bubble-delay': `${index * -0.55}s` } as CSSProperties}
               />
-              <path
-                className="liquid-surface"
-                d="M104 184q55-8 108 0t108 0 108 0 108 0"
-                fill="none"
-                stroke={substance.color}
-                strokeOpacity=".8"
-                strokeWidth="2"
-              />
-            </>
-          )}
-          {approachingBoiling && (
-            <g className="boiling-bubbles">
-              {[0, 1, 2, 3, 4, 5].map((index) => (
-                <circle
-                  className="boiling-bubble"
-                  cx={171 + index * 55}
-                  cy={220 + (index % 3) * 20}
-                  key={index}
-                  r={3 + (index % 3)}
-                  style={{ '--bubble-delay': `${index * -0.55}s` } as CSSProperties}
-                />
-              ))}
-            </g>
-          )}
-          {phase === 'solid' && (
-            <path
-              d="M105 226h430v78H105z"
-              fill={substance.color}
-              fillOpacity=".24"
-            />
-          )}
-          {phase === 'gas' && (
-            <path
-              d="M104 58h432v244H104z"
-              fill={substance.color}
-              fillOpacity=".055"
-            />
-          )}
-          {particles}
+            ))}
+          </g>
+          <g className={`particle-cloud particle-cloud--${phase}`}>{particles}</g>
         </g>
 
         <path
@@ -209,9 +195,10 @@ export function ParticleVessel({
         </g>
 
         <g aria-hidden="true" className="hotplate">
-          <ellipse className="burner-glow" cx="320" cy="312" rx="86" ry="14" />
           <path d="M212 303h216l-13 20H225z" />
           <path className="hotplate-top" d="M222 297h196v7H222z" />
+          <ellipse className="burner-glow" cx="320" cy="299.5" rx="60" ry="5" />
+          <ellipse className="burner-coil" cx="320" cy="299.5" rx="48" ry="2.5" />
           <circle className="hotplate-knob" cx="399" cy="313" r="3" />
           <path className="hotplate-leg" d="M237 323v5m166-5v5" />
         </g>

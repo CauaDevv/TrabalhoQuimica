@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ControlPanel } from './components/ControlPanel'
 import { EventLog, type ExperimentEvent } from './components/EventLog'
+import { PhaseGallery } from './components/PhaseGallery'
 import { ParticleVessel } from './components/ParticleVessel'
 import { TheoryPanel } from './components/TheoryPanel'
 import './App.css'
@@ -27,6 +28,7 @@ function getTime() {
 }
 
 function App() {
+  const logoSrc = `${import.meta.env.BASE_URL}Logo.jpeg`
   const [substanceId, setSubstanceId] = useState('water')
   const [temperature, setTemperature] = useState(22)
   const [pressure, setPressure] = useState(1)
@@ -125,19 +127,12 @@ function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <a aria-label="Atomo, início" className="brand" href="#">
-          <span aria-hidden="true" className="brand-mark">
-            <svg viewBox="0 0 32 32">
-              <ellipse cx="16" cy="16" rx="12" ry="5.5" />
-              <ellipse cx="16" cy="16" rx="12" ry="5.5" transform="rotate(60 16 16)" />
-              <ellipse cx="16" cy="16" rx="12" ry="5.5" transform="rotate(120 16 16)" />
-              <circle cx="16" cy="16" r="2.2" />
-            </svg>
-          </span>
-          <span>átomo<span className="brand-period">.</span></span>
+        <a aria-label="ThermaSim, início" className="brand" href="#">
+          <img alt="" className="brand-mark" src={logoSrc} />
+          <span>Therma<span className="brand-accent">Sim</span></span>
         </a>
         <div className="topbar-right">
-          <span className="course-tag">LABORATÓRIO DE QUÍMICA</span>
+          <span className="course-tag">THERMASIM · QUÍMICA</span>
           <span aria-hidden="true" className="topbar-divider" />
           <span className="lesson-label">Termodinâmica</span>
         </div>
@@ -172,13 +167,11 @@ function App() {
         <section aria-label="Bancada de laboratório" className="lab-room">
           <div className="room-labelbar">
             <div className="room-location">
-              <span className="room-window" aria-hidden="true">
-                <span />
-                <span />
-                <span />
+              <span className="room-window">
+              <img alt="" src={logoSrc} />
               </span>
               <span>
-                <strong>LABORATÓRIO 02</strong>
+                <strong>THERMASIM · LAB 02</strong>
                 <small>BANCADA DE TERMODINÂMICA</small>
               </span>
             </div>
@@ -248,56 +241,11 @@ function App() {
           </section>
 
           <section className="bottom-grid">
-          <article aria-labelledby="phase-map-title" className="phase-card">
-            <div className="card-heading phase-heading">
-              <div>
-                <span className="eyebrow">MAPA DE FASES</span>
-                <h2 id="phase-map-title">Onde estamos agora?</h2>
-              </div>
-              <span className="current-temp">{formatTemperature(temperature)}</span>
-            </div>
-            <div className="phase-track" aria-label={`Estado atual: ${phaseNames[phase]}`}>
-              {(['solid', 'liquid', 'gas'] as const).map((item, index) => (
-                <div
-                  aria-current={phase === item ? 'step' : undefined}
-                  className={`phase-step${phase === item ? ' phase-step--active' : ''}`}
-                  key={item}
-                >
-                  <span className={`phase-icon phase-icon--${item}`}>
-                    {item === 'solid' ? (
-                      <svg aria-hidden="true" viewBox="0 0 24 24">
-                        <path d="m12 3 7.8 4.5v9L12 21l-7.8-4.5v-9L12 3Z" />
-                        <path d="m4.6 7.7 7.4 4.4 7.4-4.4M12 12v8.5" />
-                      </svg>
-                    ) : item === 'liquid' ? (
-                      <svg aria-hidden="true" viewBox="0 0 24 24">
-                        <path d="M12 3.5S5.5 11 5.5 15a6.5 6.5 0 0 0 13 0c0-4-6.5-11.5-6.5-11.5Z" />
-                        <path d="M9 16a3 3 0 0 0 3 3" />
-                      </svg>
-                    ) : (
-                      <svg aria-hidden="true" viewBox="0 0 24 24">
-                        <circle cx="6" cy="8" r="1.8" />
-                        <circle cx="16.8" cy="6" r="1.4" />
-                        <circle cx="13" cy="15" r="2.1" />
-                        <circle cx="19" cy="18" r="1.3" />
-                      </svg>
-                    )}
-                  </span>
-                  <div className="phase-step-copy">
-                    <span>{phaseNames[item]}</span>
-                    <small>
-                      {index === 0
-                        ? `≤ ${formatTemperature(substance.meltingPoint)}`
-                        : index === 1
-                          ? 'Entre os pontos'
-                          : `≥ ${formatTemperature(boilingPoint)}`}
-                    </small>
-                  </div>
-                  {phase === item && <span className="you-are-here">VOCÊ ESTÁ AQUI</span>}
-                </div>
-              ))}
-            </div>
-          </article>
+          <PhaseGallery
+            boilingPoint={boilingPoint}
+            phase={phase}
+            substance={substance}
+          />
 
           <EventLog events={events} />
           </section>
@@ -312,7 +260,7 @@ function App() {
         />
 
         <footer className="page-footer">
-          <span>ÁTOMO<span className="brand-period">.</span> LAB</span>
+          <span>THERMASIM<span className="brand-period">.</span> LAB</span>
           <span>
             Modelo aproximado de Clausius–Clapeyron
             <span aria-hidden="true"> · </span>

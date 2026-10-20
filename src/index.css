@@ -21,6 +21,12 @@
   --mono: 'DM Mono', monospace;
 }
 
+@property --liquid-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #77c8e9;
+}
+
 * {
   box-sizing: border-box;
 }

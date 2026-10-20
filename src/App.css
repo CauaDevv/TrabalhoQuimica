@@ -17,7 +17,7 @@
   gap: 9px;
   color: var(--ink);
   font-family: Manrope, sans-serif;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 800;
   letter-spacing: -1.4px;
   text-decoration: none;
@@ -25,27 +25,22 @@
 
 .brand-mark {
   display: inline-flex;
-  width: 30px;
-  height: 30px;
+  width: 38px;
+  height: 42px;
   align-items: center;
   justify-content: center;
-  color: var(--green);
-}
-
-.brand-mark svg {
-  width: 28px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.4;
-}
-
-.brand-mark circle {
-  fill: currentColor;
-  stroke: none;
+  border: 1px solid #e9ede8;
+  border-radius: 5px;
+  background: #fff;
+  object-fit: contain;
 }
 
 .brand-period {
-  color: var(--green);
+  color: #e20d17;
+}
+
+.brand-accent {
+  color: #08a95d;
 }
 
 .topbar-right {
@@ -1311,33 +1306,20 @@
 .room-window {
   display: flex;
   width: 42px;
-  height: 34px;
-  align-items: end;
+  height: 38px;
+  align-items: center;
   justify-content: center;
-  gap: 3px;
-  padding: 4px 6px;
+  padding: 3px;
   border: 1px solid rgb(232 241 231 / 38%);
   border-radius: 4px;
-  background: linear-gradient(180deg, #80998b, #546f60);
+  background: #fff;
 }
 
-.room-window span {
-  width: 5px;
-  border: 1px solid rgb(228 236 223 / 47%);
-  border-radius: 2px 2px 0 0;
-  background: rgb(207 225 202 / 19%);
-}
-
-.room-window span:nth-child(1) {
-  height: 12px;
-}
-
-.room-window span:nth-child(2) {
-  height: 21px;
-}
-
-.room-window span:nth-child(3) {
-  height: 16px;
+.room-window img {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  object-fit: contain;
 }
 
 .room-instruments {
@@ -1533,19 +1515,32 @@
 }
 
 .burner-glow {
-  fill: #f5a35a;
+  fill: url(#burner-aura);
   opacity: 0;
-  filter: blur(8px);
-  transition: opacity 250ms ease;
+  filter: blur(3px);
+  transition: opacity 650ms ease;
 }
 
 .vessel-stage--heating .burner-glow {
-  opacity: 0.48;
-  animation: burner-pulse 1.3s ease-in-out infinite alternate;
+  opacity: 0.78;
+}
+
+.burner-coil {
+  fill: none;
+  stroke: #d75e3f;
+  stroke-linecap: round;
+  stroke-width: 2.2;
+  opacity: 0;
+  filter: drop-shadow(0 0 3px #ed8b5d);
+  transition: opacity 500ms ease;
+}
+
+.vessel-stage--heating .burner-coil {
+  opacity: 0.9;
 }
 
 .vessel-stage--heating .hotplate-top {
-  fill: #e6a06b;
+  fill: #d5a184;
 }
 
 .vessel-caption {
@@ -1874,17 +1869,6 @@
   }
 }
 
-@keyframes burner-pulse {
-  from {
-    opacity: 0.3;
-    scale: 0.9 0.8;
-  }
-  to {
-    opacity: 0.68;
-    scale: 1.08 1.15;
-  }
-}
-
 @keyframes substance-reveal {
   from {
     opacity: 0.35;
@@ -1945,8 +1929,8 @@
   }
 
   .room-window {
-    width: 35px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
   }
 
   .theory-section {
@@ -2021,5 +2005,540 @@
   .vessel-illustration,
   .live-indicator > span {
     animation: none !important;
+  }
+
+  .burner-glow,
+  .burner-coil {
+    transition: none !important;
+  }
+}
+
+.vessel-stage {
+  --phase-transition: 900ms;
+
+  transition:
+    background-color var(--phase-transition) ease,
+    --liquid-color 800ms ease;
+}
+
+.vessel-stage--heating {
+  --phase-transition: 550ms;
+}
+
+.particle {
+  transition:
+    transform 1200ms cubic-bezier(0.4, 0, 0.2, 1),
+    r 900ms cubic-bezier(0.4, 0, 0.2, 1),
+    fill 950ms ease,
+    opacity 850ms ease;
+  transform: translate(var(--particle-x), var(--particle-y));
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+
+.particle-cloud {
+  transition: opacity 700ms ease;
+}
+
+.particle--solid {
+  animation: solid-vibration var(--motion-duration) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+
+.particle--liquid {
+  animation: liquid-motion var(--motion-duration) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+
+.particle--gas {
+  animation: gas-motion var(--motion-duration) linear infinite alternate;
+  animation-delay: var(--delay);
+}
+
+.phase-fill,
+.liquid-fill,
+.liquid-surface {
+  transition:
+    opacity 850ms ease,
+    fill 800ms ease,
+    stroke 800ms ease;
+}
+
+.phase-fill--solid {
+  fill: var(--liquid-color);
+  fill-opacity: 0.24;
+  opacity: 0;
+}
+
+.phase-fill--gas {
+  fill: var(--liquid-color);
+  fill-opacity: 0.055;
+  opacity: 0;
+}
+
+.vessel-stage--solid .phase-fill--solid,
+.vessel-stage--gas .phase-fill--gas {
+  opacity: 1;
+}
+
+.liquid-fill,
+.liquid-surface {
+  opacity: 0;
+}
+
+.vessel-stage--liquid .liquid-fill,
+.vessel-stage--liquid .liquid-surface {
+  opacity: 1;
+}
+
+.liquid-stop {
+  stop-color: var(--liquid-color);
+  transition: stop-color 800ms ease;
+}
+
+.boiling-bubbles {
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.boiling-bubbles--active {
+  opacity: 1;
+}
+
+.boiling-bubble {
+  animation-play-state: paused;
+}
+
+.boiling-bubbles--active .boiling-bubble {
+  animation-play-state: running;
+}
+
+.vessel-lid rect,
+.thermometer-mercury,
+.thermometer-bulb,
+.hotplate-top,
+.burner-glow {
+  transition:
+    fill 650ms ease,
+    opacity 450ms ease,
+    height 220ms ease,
+    y 220ms ease;
+}
+
+.vessel-lid {
+  transform-box: view-box;
+  transform-origin: center;
+  transition:
+    opacity 450ms ease,
+    translate 550ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.vessel-lid--open {
+  translate: 0 -25px;
+  opacity: 0;
+}
+
+.vessel-lid--closed {
+  translate: 0 0;
+  opacity: 1;
+}
+
+.vessel-caption {
+  transition: opacity 250ms ease;
+  animation: caption-arrive 300ms ease both;
+}
+
+.phase-pill {
+  transition:
+    background-color 550ms ease,
+    border-color 550ms ease,
+    color 550ms ease;
+}
+
+.vessel-temperature {
+  transition:
+    color 400ms ease,
+    background-color 400ms ease;
+}
+
+@keyframes caption-arrive {
+  from {
+    opacity: 0.55;
+    translate: 0 3px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle,
+  .particle-cloud,
+  .phase-fill,
+  .liquid-fill,
+  .liquid-surface,
+  .boiling-bubbles,
+  .vessel-stage {
+    transition: none !important;
+  }
+}
+
+.phase-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.phase-specimen {
+  min-width: 0;
+  padding: 7px;
+  border: 1px solid #e8ece6;
+  border-radius: 6px;
+  background: #fcfdfb;
+  transition:
+    border-color 350ms ease,
+    background-color 350ms ease,
+    box-shadow 350ms ease,
+    transform 350ms ease;
+}
+
+.phase-specimen--active {
+  transform: translateY(-2px);
+  border-color: #9ebda5;
+  background: #f5f9f4;
+  box-shadow: 0 5px 14px rgb(54 99 68 / 9%);
+}
+
+.specimen-window {
+  position: relative;
+  height: 132px;
+  overflow: hidden;
+  border: 1px solid #c9d5cb;
+  border-top: 2px solid #b6c7b9;
+  border-radius: 5px 5px 13px 13px;
+  background-color: #f4f7f2;
+  background-image:
+    linear-gradient(rgb(181 196 181 / 12%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(181 196 181 / 12%) 1px, transparent 1px);
+  background-size: 25% 25%;
+  box-shadow:
+    inset 4px 0 6px rgb(255 255 255 / 67%),
+    inset -4px 0 6px rgb(255 255 255 / 45%);
+}
+
+.specimen-rim {
+  position: absolute;
+  top: -2px;
+  right: -1px;
+  left: -1px;
+  height: 5px;
+  border: 1px solid #b6c7b9;
+  border-radius: 5px 5px 2px 2px;
+  background: #e9eee8;
+}
+
+.specimen-base {
+  position: absolute;
+  right: 12%;
+  bottom: -3px;
+  left: 12%;
+  height: 4px;
+  border-radius: 50%;
+  background: #9eafa0;
+  opacity: 0.48;
+}
+
+.specimen-liquid,
+.specimen-solid {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  left: 1px;
+  height: 44%;
+  border-radius: 48% 48% 11px 11px / 8% 8% 10px 10px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--specimen-color) 24%, white), color-mix(in srgb, var(--specimen-color) 18%, white));
+  opacity: 0;
+  transition:
+    height 450ms ease,
+    opacity 450ms ease,
+    background-color 450ms ease;
+}
+
+.specimen-liquid {
+  z-index: 0;
+  height: 54%;
+  border-radius: 38% 42% 11px 11px / 5% 8% 10px 10px;
+  opacity: 1;
+}
+
+.specimen-solid {
+  z-index: 0;
+  right: 8%;
+  left: 8%;
+  height: 38%;
+  border: 1px solid color-mix(in srgb, var(--specimen-color) 48%, white);
+  border-radius: 3px 3px 8px 8px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--specimen-color) 24%, white), color-mix(in srgb, var(--specimen-color) 15%, white));
+}
+
+.specimen-wave {
+  position: absolute;
+  z-index: 1;
+  right: 2px;
+  bottom: calc(54% - 1px);
+  left: 2px;
+  height: 9px;
+  border-top: 1px solid color-mix(in srgb, var(--specimen-color) 75%, white);
+  border-radius: 50%;
+  opacity: 0.85;
+  transition:
+    bottom 450ms ease,
+    opacity 350ms ease;
+}
+
+.specimen-particle {
+  position: absolute;
+  z-index: 2;
+  top: var(--particle-y);
+  left: var(--particle-x);
+  width: 8px;
+  height: 8px;
+  border: 1px solid color-mix(in srgb, var(--specimen-color) 75%, #527b69);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--specimen-color) 70%, white);
+  box-shadow: 0 1px 2px rgb(52 73 57 / 14%);
+  transform: translate(-50%, -50%);
+  transition:
+    top 500ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    left 500ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    width 350ms ease,
+    height 350ms ease,
+    box-shadow 350ms ease;
+}
+
+.specimen-window--solid {
+  background-color: #f0f4ef;
+  background-image:
+    linear-gradient(rgb(173 193 177 / 21%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(173 193 177 / 21%) 1px, transparent 1px);
+  background-size: 15% 13%;
+}
+
+.specimen-window--solid .specimen-solid {
+  opacity: 1;
+}
+
+.specimen-window--solid .specimen-particle {
+  width: 9px;
+  height: 9px;
+}
+
+.specimen-window--liquid .specimen-wave {
+  animation: specimen-wave 2.8s ease-in-out infinite alternate;
+}
+
+.specimen-window--liquid .specimen-particle {
+  animation: specimen-liquid-motion 2.6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--particle-index) * -0.13s);
+}
+
+.specimen-window--gas {
+  background-color: #f7f8f5;
+  background-image:
+    radial-gradient(circle at 25% 28%, rgb(125 155 132 / 9%) 1px, transparent 1.5px),
+    radial-gradient(circle at 74% 67%, rgb(125 155 132 / 8%) 1px, transparent 1.5px);
+  background-size: 19px 23px, 27px 21px;
+}
+
+.specimen-window--gas .specimen-particle {
+  width: 7px;
+  height: 7px;
+  animation: specimen-gas-motion 2.3s ease-in-out infinite alternate;
+  animation-delay: calc(var(--particle-index) * -0.17s);
+}
+
+.specimen-caption {
+  position: absolute;
+  z-index: 3;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
+  overflow: hidden;
+  color: #849087;
+  font-family: var(--mono);
+  font-size: 6px;
+  letter-spacing: 0.45px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.specimen-heading {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 5px;
+  margin: 9px 1px 0;
+}
+
+.specimen-state-dot {
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8da4a0;
+}
+
+.specimen-state-dot--liquid {
+  background: #63a9c2;
+}
+
+.specimen-state-dot--gas {
+  background: #83aa88;
+}
+
+.specimen-heading h3 {
+  overflow: hidden;
+  margin: 0;
+  color: #4b5b50;
+  font-family: Manrope, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.specimen-current {
+  margin-left: auto;
+  color: #61836a;
+  font-family: var(--mono);
+  font-size: 6px;
+  letter-spacing: 0.4px;
+}
+
+.specimen-description {
+  min-height: 28px;
+  margin: 5px 1px 0;
+  color: #77837a;
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+.specimen-threshold {
+  display: block;
+  margin: 6px 1px 1px;
+  padding-top: 6px;
+  border-top: 1px solid #e8ede7;
+  color: #87948a;
+  font-family: var(--mono);
+  font-size: 7px;
+  line-height: 1.45;
+}
+
+@keyframes specimen-wave {
+  from {
+    translate: -3px 1px;
+    scale: 1 0.85;
+  }
+  to {
+    translate: 3px -1px;
+    scale: 1 1.12;
+  }
+}
+
+@keyframes specimen-liquid-motion {
+  from {
+    translate: -1px 0;
+  }
+  to {
+    translate: 1px -2px;
+  }
+}
+
+@keyframes specimen-gas-motion {
+  from {
+    translate: -2px 2px;
+  }
+  to {
+    translate: 3px -3px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .phase-gallery {
+    gap: 6px;
+  }
+
+  .specimen-window {
+    height: 115px;
+  }
+
+  .specimen-description {
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 440px) {
+  .phase-gallery {
+    gap: 5px;
+  }
+
+  .phase-specimen {
+    padding: 4px;
+  }
+
+  .specimen-window {
+    height: 90px;
+  }
+
+  .specimen-particle {
+    width: 6px;
+    height: 6px;
+  }
+
+  .specimen-window--solid .specimen-particle {
+    width: 7px;
+    height: 7px;
+  }
+
+  .specimen-heading {
+    gap: 4px;
+    margin-top: 7px;
+  }
+
+  .specimen-heading h3 {
+    font-size: 9px;
+  }
+
+  .specimen-current {
+    font-size: 5px;
+  }
+
+  .specimen-description {
+    min-height: 40px;
+    font-size: 7px;
+  }
+
+  .specimen-threshold {
+    font-size: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .specimen-window--liquid .specimen-wave,
+  .specimen-window--liquid .specimen-particle,
+  .specimen-window--gas .specimen-particle {
+    animation: none !important;
+  }
+
+  .phase-specimen,
+  .specimen-particle,
+  .specimen-liquid,
+  .specimen-solid,
+  .specimen-wave {
+    transition: none !important;
   }
 }
